@@ -46,16 +46,22 @@ enable_testing()
 # 临时的后续需要修改!!
 # 添加你的测试源文件
 add_executable(test_order test/matching/test_order.cpp)
+add_executable(test_level test/matching/test_level.cpp)
 
 # 链接 Google Test 库
 target_link_libraries(test_order gtest gtest_main pthread)
 target_link_libraries(test_order trader_lib)
+# Test Level.cpp
+target_link_libraries(test_level gtest gtest_main pthread)
+target_link_libraries(test_level trader_lib)
 
 # 添加测试
 add_test(NAME test_order COMMAND test_order)
+add_test(NAME test_level COMMAND test_level)
 
 # 添加专门的测试运行目标
 add_custom_target(test_order_run COMMAND test_order)
+add_custom_target(test_level_run COMMAND test_level)
 # 添加子目录
 # add_subdirectory(test)
 

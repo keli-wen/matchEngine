@@ -20,8 +20,8 @@ Order::Order(OrderType type_, OrderSide side_, uint32_t symbol_id_, uint64_t pri
 Order Order::newOrder(
     OrderType type, OrderSide side, uint64_t order_id,
     uint32_t symbol_id, uint64_t quantity, uint64_t price) {
-    if (type != OrderType::LIMIT && type != OrderType::SBP) {
-        if (price != 0 && "Non-limit or Non-SBP orders must have a price of 0!")
+    if (type != OrderType::LIMIT && type != OrderType::SBP && type != OrderType::CPBP) {
+        if (price != 0 && "Non-limit or Non-SBP or Non-CPBP orders must have a price of 0!")
             throw std::exception();
     }
     // All orders must have positive quantity.

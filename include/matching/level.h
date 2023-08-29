@@ -4,14 +4,13 @@
 
 namespace UBIEngine {
 // Only validate level in debug mode.
-#ifndef NDEBUG
+#ifdef DEBUG
 #    define VALIDATE_LEVEL validateLevel()
 #else
 #    define VALIDATE_LEVEL
 #endif
 
-enum class LevelSide
-{
+enum class LevelSide {
     Bid,
     Ask
 };
@@ -21,8 +20,7 @@ using namespace boost::intrusive;
 /**
  * Represents a price level in an orderbook.
  */
-class Level
-{
+class Level {
 public:
     /**
      * A constructor for the level.
@@ -162,24 +160,12 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Level &level);
 
 private:
-    /**
-     * Validates the state of the level.
-     *
-     * @throws Error if any of the following are true: an order
-     *               is on a different side than the level, the sum
-     *               of the open quantities of the orders in the level
-     *               does not equal the volume of the level, the level
-     *               contains an order that is a market order,
-     *               or the price / stop price of an order does not equal
-     *               the price of the level.
-     */
-    void validateLevel() const;
 
-    list<Order> orders;
-    LevelSide side;
-    uint32_t symbol_id;
-    uint64_t volume;
-    uint64_t price;
+    list<Order> orders; // The orders in the level.
+    LevelSide side; // The side of the level - bid or ask.
+    uint32_t symbol_id; // The symbol ID associated with the level.
+    uint64_t volume; // The total volume of the level.
+    uint64_t price; // The price associated with the level.
 };
 } // namespace UBIEngine
 #endif // UBI_TRADER_LEVEL_H
