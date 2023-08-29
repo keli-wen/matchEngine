@@ -1,7 +1,8 @@
 #ifndef UBI_TRADER_ORDER_H
 #define UBI_TRADER_ORDER_H
+#include <string>
+#include <iostream>
 #include <boost/intrusive/list.hpp>
-
 namespace UBIEngine {
 // Only validate order in debug mode.
 #ifndef NDEBUG
