@@ -7,8 +7,7 @@ namespace UBIEngine {
 /**
  * Represents a publicly traded security.
  */
-struct Symbol
-{
+struct Symbol {
     // A positive number used to identify the security.
     uint32_t id;
     // A unique series of characters and or numbers used to identify the security.
