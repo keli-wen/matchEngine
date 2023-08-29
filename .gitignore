@@ -1,0 +1,24 @@
+# 通用文件
+*.o
+*.log
+*.tmp
+
+# CMake 生成的文件和目录
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+Makefile
+
+# build 目录
+build/
+
+# 编辑器/IDE 临时文件
+*.swp
+*.swo
+*.bak
+*.sublime-*
+.vscode/
+
+# OS 生成的文件
+.DS_Store
+Thumbs.db
