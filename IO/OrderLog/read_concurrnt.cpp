@@ -16,6 +16,22 @@ struct order_log {
 } __attribute__((packed));
 
 
+void print_order_log(const std::vector<order_log>& data, int count = 100) {
+    int cur_count = 0;
+    for (const auto& entry : data) {
+        std::cout << "Instrument ID: " << entry.instrument_id
+                  << ", Timestamp: " << entry.timestamp
+                  << ", Type: " << entry.type
+                  << ", Direction: " << entry.direction
+                  << ", Volume: " << entry.volume
+                  << ", Price Offset: " << entry.price_off
+                  << std::endl;
+        ++ cur_count;
+        if (cur_count >= count) break;
+    }
+}
+
+
 /* Speed up: 3x+ */
 void readChunk(const std::string& filename, long start, long end, std::vector<order_log>& data) {
     std::ifstream file(filename, std::ios::binary);
@@ -38,7 +54,7 @@ void readChunk(const std::string& filename, long start, long end, std::vector<or
 int main(int argc, char* argv[]) {
     if (argc <= 2) {
         std::cerr << "Usage: " << argv[0] << " <path_to_file>"
-                  << "<thread_count>" << std::endl;
+                  << " <thread_count>" << std::endl;
         return 1;
     }
 
@@ -79,7 +95,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Read [Concurrnt] Time taken: "
         << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
         << "ms" << std::endl;
-    std::cout << "Please press enter to continue..." << std::endl;
+    print_order_log(combined_data);
 
     return 0;
 }
