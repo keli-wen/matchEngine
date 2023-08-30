@@ -82,6 +82,20 @@ public:
         uint32_t symbol_id, uint64_t quantity, uint64_t price=0);
 
     /**
+     * Executes the order.
+     *
+     * @param price_ the price at which to execute the order, require that price is positive.
+     * @param quantity_ the quantity of the order to execute, require that quantity is positive.
+     */
+    void execute(uint32_t price_, uint64_t quantity_) {
+        open_quantity -= quantity_;
+        executed_quantity += quantity_;
+        last_executed_price = price_;
+        last_executed_quantity = quantity_;
+        VALIDATE_ORDER;
+    }
+
+    /**
      * @return the quantity of the order.
      */
     [[nodiscard]] uint64_t getQuantity() const
@@ -286,21 +300,6 @@ private:
      */
     Order(OrderType type_, OrderSide side_, uint32_t symbol_id_,
         uint64_t price_, uint64_t quantity_, uint64_t id_);
-
-    /**
-     * Executes the order.
-     *
-     * @param price_ the price at which to execute the order, require that price is positive.
-     * @param quantity_ the quantity of the order to execute, require that quantity is positive.
-     */
-    void execute(uint32_t price_, uint64_t quantity_)
-    {
-        open_quantity -= quantity_;
-        executed_quantity += quantity_;
-        last_executed_price = price_;
-        last_executed_quantity = quantity_;
-        VALIDATE_ORDER;
-    }
 
     /**
      * Set the price of the order.

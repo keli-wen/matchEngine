@@ -3,8 +3,7 @@
 #include "order.h"
 
 namespace UBIEngine {
-class OrderBook
-{
+class OrderBook {
 public:
     /**
      * Submits an order to order book.
