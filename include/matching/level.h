@@ -112,10 +112,22 @@ public:
     Order &front();
 
     /**
+     * @return the least recently inserted order in the level,
+     *         require that the level is non-empty. const version.
+     */
+    const Order &front() const;
+
+    /**
      * @return the most recently inserted order in the level,
      *         require that the level is non-empty.
      */
     Order &back();
+
+    /**
+     * @return the most recently inserted order in the level,
+     *         require that the level is non-empty. const version.
+     */
+    const Order &back() const;
 
     /**
      * Adds an order to the level.

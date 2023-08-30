@@ -61,6 +61,16 @@ Order &Level::front() {
     return orders.front();
 }
 
+const Order &Level::front() const {
+    assert(!orders.empty() && "Level is empty!");
+    return orders.front();
+}
+
+const Order &Level::back() const {
+    assert(!orders.empty() && "Level is empty!");
+    return orders.back();
+}
+
 Order &Level::back() {
     assert(!orders.empty() && "Level is empty!");
     return orders.back();
