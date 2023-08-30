@@ -75,11 +75,18 @@ TEST(LevelTest, testDelete) {
     level1.addOrder(order2);
     level1.addOrder(order3);
 
+    // Test delete order2.
     level1.deleteOrder(order2);
     EXPECT_EQ(level1.getOrders().size(), 2);
     EXPECT_EQ(level1.getVolume(), 400);
     EXPECT_EQ(level1.getOrders().front().getOrderID(), id1);
     EXPECT_EQ(level1.getOrders().back().getOrderID(), id3);
+
+    // * 实际上，我们可以检测要被删除的 order 是否存在于 level 中，
+    // * 但是这样做会增加时间复杂度，需要不必要的开销，所以如果要删除的
+    // * order 不存在 level 中，我们直接让 boost 报错（assert）。
+    // Test delete a non-existing order.
+    // EXPECT_ANY_THROW(level1.deleteOrder(order2));
 }
 
 int main (int argc, char **argv) {
