@@ -61,7 +61,9 @@ enum class OrderType
  */
 enum class OrderSide
 {
+    // `Bid` 应该是高价优先。
     Bid = 0,
+    // `Ask` 应该是低价优先。
     Ask = 1
 };
 

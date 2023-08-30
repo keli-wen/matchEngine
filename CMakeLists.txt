@@ -31,6 +31,7 @@ link_directories(${BOOST_LIB_PATH})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 # 添加项目的 include/matching 目录，为了方便引入头文件
 include_directories(${CMAKE_SOURCE_DIR}/include/matching)
+include_directories(${CMAKE_SOURCE_DIR}/include/utils)
 
 # ------------------------------------------------------------------------------
 # UBIEngine Library
@@ -48,6 +49,7 @@ enable_testing()
 add_executable(test_order test/matching/test_order.cpp)
 add_executable(test_level test/matching/test_level.cpp)
 add_executable(test_symbol test/matching/test_symbol.cpp)
+add_executable(test_maporderbook test/matching/test_map_orderbook.cpp)
 
 # 链接 Google Test 库
 target_link_libraries(test_order gtest gtest_main pthread)
@@ -58,16 +60,21 @@ target_link_libraries(test_level trader_lib)
 # Test Symbol.cpp
 target_link_libraries(test_symbol gtest gtest_main pthread)
 target_link_libraries(test_symbol trader_lib)
+# Test MapOrderbook.cpp
+target_link_libraries(test_maporderbook gtest gtest_main pthread)
+target_link_libraries(test_maporderbook trader_lib)
 
 # 添加测试
 add_test(NAME test_order COMMAND test_order)
 add_test(NAME test_level COMMAND test_level)
 add_test(NAME test_symbol COMMAND test_symbol)
+add_test(NAME test_maporderbook COMMAND test_maporderbook)
 
 # 添加专门的测试运行目标
 add_custom_target(test_order_run COMMAND test_order)
 add_custom_target(test_level_run COMMAND test_level)
 add_custom_target(test_symbol_run COMMAND test_symbol)
+add_custom_target(test_maporderbook_run COMMAND test_maporderbook)
 # 添加子目录
 # add_subdirectory(test)
 
