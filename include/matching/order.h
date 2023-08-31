@@ -52,6 +52,17 @@ enum class OrderType
     FOK = 5                 // 全额成交或撤销申报 (Fill Or Kill)
 };
 
+inline OrderType int2OrderType(int type) {
+    switch (type) {
+        case 0: return OrderType::LIMIT;
+        case 1: return OrderType::CPBP;
+        case 2: return OrderType::SBP;
+        case 3: return OrderType::TOP5_IOC_CANCEL;
+        case 4: return OrderType::IOC_CANCEL;
+        case 5: return OrderType::FOK;
+        default: return OrderType::LIMIT;
+    }
+}
 
 /**
  * Order sides.
