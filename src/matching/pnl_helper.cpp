@@ -9,7 +9,7 @@ PnlHelper::PnlHelper(
     , prev_position(prev_position_)
     , cash(0) {}
 
-int64_t PnlHelper::calculatePnl(uint64_t current_price) {
+const int64_t PnlHelper::calculatePnl(uint64_t current_price) const {
     int64_t current_valuation =
         static_cast<int64_t>(position) * current_price;
     int64_t prev_valuation =

@@ -13,7 +13,7 @@ public:
      * @param current_price the current price of the security.
      * @return the PnL of the position. [int64_t]
      */
-    int64_t calculatePnl(uint64_t current_price);
+    const int64_t calculatePnl(uint64_t current_price) const;
 
     /**
      * Updates the account based on executed orders.
