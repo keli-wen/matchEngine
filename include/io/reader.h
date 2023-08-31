@@ -134,11 +134,11 @@ void emplaceTwapOrder_vec(std::vector<twap_order>& vec,
 void emplacePnlAndPos_vec(std::vector<pnland_pos>& vec,
     const char* instrument_id, int32_t position, double pnl)
 {
-    IO::pnland_pos pnl;
-    std::memcpy(pnl.instrument_id, instrument_id, sizeof(pnl.instrument_id));
-    pnl.position = position;
-    pnl.pnl = pnl;
-    vec.emplace_back(pnl);
+    IO::pnland_pos pnl_and_pos;
+    std::memcpy(pnl_and_pos.instrument_id, instrument_id, sizeof(pnl_and_pos.instrument_id));
+    pnl_and_pos.position = position;
+    pnl_and_pos.pnl = pnl;
+    vec.emplace_back(pnl_and_pos);
 }
 
 } // namespace UBIEngine::IO
