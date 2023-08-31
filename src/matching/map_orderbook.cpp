@@ -4,9 +4,13 @@
 
 namespace UBIEngine {
 // Only need a symbol ID for the map orderbook.
-MapOrderBook::MapOrderBook(uint32_t symbol_id_)
+MapOrderBook::MapOrderBook(
+    uint32_t symbol_id_,
+    uint64_t previous_close_price_,
+    uint32_t previous_position_)
     : symbol_id(symbol_id_)
     , last_traded_price(0)
+    , pnl_helper(previous_close_price_, previous_position_)
 {}
 
 void MapOrderBook::addOrder(Order order) {
@@ -104,8 +108,91 @@ void MapOrderBook::deleteOrder(uint64_t order_id, bool notification) {
     orders.erase(orders_it);
 }
 
+uint64_t MapOrderBook::getBasePrice(OrderSide side) const {
+    if(side == OrderSide::Bid) {
+        // For buy orders
+        if(!ask_levels.empty()) {
+            return bestAsk();
+        } else if(!bid_levels.empty()) {
+            return bestBid();
+        } else if(last_traded_price != 0) {
+            return lastTradedPrice();
+        } else {
+            return previousClosePrice();
+        }
+    } else {
+        // For sell orders
+        if(!bid_levels.empty()) {
+            return bestBid();
+        } else if(!ask_levels.empty()) {
+            return bestAsk();
+        } else if(last_traded_price != 0) {
+            return lastTradedPrice();
+        } else {
+            return previousClosePrice();
+        }
+    }
+}
+
+bool MapOrderBook::isPriceWithinAllowedRange(const Order &order) const {
+    assert(order.getType() == OrderType::LIMIT
+        && "Only limit orders can be checked against allowed range!");
+
+    uint64_t basePrice = getBasePrice(order.getSide());
+    // Assuming minimal increment is 1.
+    uint64_t minIncrement = 1;
+
+    // 10% increase.
+    uint64_t maxLimit = 
+        static_cast<uint64_t>(previousClosePrice() * 1.10);
+    // 10% decrease.
+    uint64_t minLimit =
+        static_cast<uint64_t>(previousClosePrice() * 0.90);
+    if(order.getSide() == OrderSide::Bid) {
+        // 2% increase.
+        uint64_t maxBase = 
+            static_cast<uint64_t>(basePrice * 1.02);
+        
+
+        uint64_t adjustedMax =
+            std::max(maxBase, basePrice + 10 * minIncrement);
+        // std::cout << ">>> OrderSide: Bid" << std::endl;
+        // std::cout << "basePrice: " << basePrice << std::endl;
+        // std::cout << "maxBase: " << maxBase << std::endl;
+        // std::cout << "maxLimit: " << maxLimit << std::endl;
+        // std::cout << "minLimit: " << minLimit << std::endl;
+        // std::cout << "adjustedMax: " << adjustedMax << std::endl;
+        // std::cout << "order.price: " << order.price << std::endl;
+        // std::cout << "====================\n" << std::endl;
+        return order.price <= adjustedMax
+            && minLimit <= order.price && order.price <= maxLimit;
+    } else { // SELL order.
+        // 2% decrease.
+        uint64_t minBase =
+            static_cast<uint64_t>(basePrice * 0.98);
+
+        uint64_t adjustedMin = 
+            (basePrice > 10 * minIncrement) 
+                ? std::min(minBase, basePrice - 10 * minIncrement) 
+                : 0;
+        // std::cout << ">>> OrderSide: Ask" << std::endl;
+        // std::cout << "basePrice: " << basePrice << std::endl;
+        // std::cout << "minBase: " << minBase << std::endl;
+        // std::cout << "maxLimit: " << maxLimit << std::endl;
+        // std::cout << "minLimit: " << minLimit << std::endl;
+        // std::cout << "adjustedMin: " << adjustedMin << std::endl;
+        // std::cout << "order.price: " << order.price << std::endl;
+        // std::cout << "====================\n" << std::endl;
+        return order.price >= adjustedMin
+            && minLimit <= order.price && order.price <= maxLimit;
+    }
+}
+
+
 void MapOrderBook::addLimitOrder(Order &order) {
-    //TODO: 可能需要 check 基准价格是否合法。
+    /* 如果无法满足基准价格的限制，就相当于撤销了。 */
+    if (!isPriceWithinAllowedRange(order))
+        return void();
     match(order);
     if (!order.isFilled())
         insertLimitOrder(order);
@@ -135,6 +222,7 @@ void MapOrderBook::insertLimitOrder(const Order &order) {
 
 void MapOrderBook::addMarketOrder(Order &order) {
     //TODO: 可能需要 check 基准价格是否合法。
+    //!Reply: Not need for market order.
     if (order.getType() == OrderType::CPBP) {
         // 如果是对手方最优价格且对方盘口为空，则直接 skip。
         if (order.isAsk() && bid_levels.empty())
@@ -256,6 +344,19 @@ void MapOrderBook::executeOrders(
     bid.execute(executing_price, matched_quantity);
     ask.execute(executing_price, matched_quantity);
     last_traded_price = executing_price;
+    // 考虑策略单的情况，如果是策略单，那么需要更新 PnlHelper.
+    if (bid.isStrategyOrder()) {
+        assert (bid.getType() == OrderType::LIMIT
+            && "Only limit orders can be strategy order!");
+        pnl_helper.updateAccount(bid.getSide(),
+            bid.getLastExecutedPrice(), bid.getLastExecutedQuantity());
+    }
+    if (ask.isStrategyOrder()){
+        assert (ask.getType() == OrderType::LIMIT
+            && "Only limit orders can be strategy order!");
+        pnl_helper.updateAccount(ask.getSide(),
+            ask.getLastExecutedPrice(), ask.getLastExecutedQuantity());
+    }
 }
 
 /* 用于服务 TYPE 为 FOK 的订单 */

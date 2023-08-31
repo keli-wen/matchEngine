@@ -17,7 +17,11 @@ TEST(MapOrderBookTest, initMapOrderBook) {
 
 TEST(MapOrderBookTest, addLIMITOrder) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -63,7 +67,11 @@ TEST(MapOrderBookTest, addMarketOrder_CPBP) {
     // 所以我们无法知道中间 order 的状态。我只能写一个简单的。
 
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -103,7 +111,11 @@ TEST(MapOrderBookTest, addMarketOrder_SBP) {
     // 所以我们无法知道中间 order 的状态。我只能写一个简单的。
 
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -130,7 +142,11 @@ TEST(MapOrderBookTest, addMarketOrder_SBP) {
 
 TEST(MapOrderBookTest, delOrder) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -171,7 +187,11 @@ TEST(MapOrderBookTest, delOrder) {
 
 TEST(MapOrderBookTest, canMatchOrder) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -186,7 +206,7 @@ TEST(MapOrderBookTest, canMatchOrder) {
     // init LIMIT order2.
     uint64_t order_id2 = 2;
     uint64_t quantity2 = 100;
-    uint64_t bid_price = 200;
+    uint64_t bid_price = 101;
     auto limitOrder2 = Order::newOrder(
         OrderType::LIMIT, OrderSide::Bid, order_id2,
         symbol, quantity2, bid_price);
@@ -217,7 +237,11 @@ TEST(MapOrderBookTest, canMatchOrder) {
 
 TEST(MapOrderBookTest, top5Match_equal) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -278,7 +302,11 @@ TEST(MapOrderBookTest, top5Match_equal) {
 
 TEST(MapOrderBookTest, top5Match_notFill) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;
@@ -339,7 +367,11 @@ TEST(MapOrderBookTest, top5Match_notFill) {
 
 TEST(MapOrderBookTest, top5Match_exceed) {
     uint32_t symbol = 1;
-    MapOrderBook mapOrderBook = MapOrderBook(symbol);
+    // Add for PnlHelper.
+    uint64_t prev_close_price = 100;
+    uint32_t prev_position = 1000;
+    MapOrderBook mapOrderBook = MapOrderBook(symbol,
+        prev_close_price, prev_position);
 
     // init LIMIT order1.
     uint64_t order_id1 = 1;

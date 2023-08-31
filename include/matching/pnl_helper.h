@@ -7,7 +7,7 @@ namespace UBIEngine {
 
 class PnlHelper {
 public:
-    PnlHelper(uint64_t prev_close_price_, uint32_t prev_position_);
+    PnlHelper(uint64_t prev_close_price_ = 0, uint32_t prev_position_ = 0);
 
     /**
      * @param current_price the current price of the security.

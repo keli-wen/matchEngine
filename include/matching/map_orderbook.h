@@ -5,7 +5,7 @@
 #include "robin_hood.h"
 #include "level.h"
 #include "orderbook.h"
-#include "order.h"
+#include "pnl_helper.h"
 // #include "event_handler/event_handler.h"
 
 namespace UBIEngine {
@@ -33,7 +33,8 @@ public:
      *
      * @param symbol_id_ the symbol ID that will be associated with the book.
      */
-    MapOrderBook(uint32_t symbol_id_);
+    MapOrderBook(uint32_t symbol_id_, uint64_t previous_close_price_ = 0,
+        uint32_t previous_position_ = 0);
 
     /**
      * @inheritdoc
@@ -54,6 +55,17 @@ public:
      * @inheritdoc
      */
     void deleteOrder(uint64_t order_id) override;
+
+    /** 
+     * @return 返回计算好的基准价格。
+     */
+    uint64_t getBasePrice(OrderSide side) const;
+
+    /**
+     * @param order the order to add to the book. (must be LIMIT order)
+     * @return `[bool]` if the order's price is within the allowed range.
+     */
+    bool isPriceWithinAllowedRange(const Order &order) const;
 
     /**
      * @inheritdoc
@@ -116,6 +128,20 @@ public:
      */
     [[nodiscard]] uint64_t lastTradedPrice() const override {
         return last_traded_price;
+    }
+
+    /**
+     * @return the previous close price. define in pnl_helper.h
+     */
+    [[nodiscard]] uint64_t previousClosePrice() const {
+        return pnl_helper.getPreviousClosePrice();
+    }
+
+    /**
+     * @return the previous position. define in pnl_helper.h
+     */
+    [[nodiscard]] uint32_t previousPosition() const {
+        return pnl_helper.getPrevPosition();
     }
 
     /**
@@ -233,6 +259,8 @@ private:
     // so the price level vectors will be destroyed before orders. This is
     // required for the intrusive list.
 
+    // PnlHelper for easy pnl calculation.
+    PnlHelper pnl_helper;
     // Maps order IDs to order wrappers.
     robin_hood::unordered_map<uint64_t, OrderWrapper> orders;
     // Maps prices to limit levels.
