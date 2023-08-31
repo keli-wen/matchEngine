@@ -32,7 +32,7 @@ struct twap_order {
     double price;
 } __attribute__((packed));
 
-struct pnland_pos {
+struct pnl_and_pos {
     char instrument_id[8];
 	int position;
 	double pnl;

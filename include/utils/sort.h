@@ -13,7 +13,7 @@ bool my_compare_twap(const IO::twap_order &a, const IO::twap_order &b) {
     return std::strncmp(a.instrument_id, b.instrument_id, 8) < 0;
 }
 
-bool my_compare_pnl(const IO::pnland_pos &a, const IO::pnland_pos &b) {
+bool my_compare_pnl(const IO::pnl_and_pos &a, const IO::pnl_and_pos &b) {
     return std::strncmp(a.instrument_id, b.instrument_id, 8) < 0;
 }
 
