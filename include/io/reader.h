@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <thread>
+#include <queue>
 #include <io/type.h>
 
 namespace UBIEngine::IO {
@@ -28,6 +29,22 @@ void readChunk(
         file.read((char*)&entry, sizeof(T));
         data[i] = entry;
     }
+}
+
+template<typename T>
+std::vector<T> reader_sync(const std::string& filePath) {
+    std::vector<T> data;
+    std::ifstream file(filePath, std::ios::binary);
+
+    while (true) {
+        T entry;
+        file.read((char*)&entry, sizeof(T));
+        if (file.eof()) break;
+        data.push_back(entry);
+    }
+
+    file.close();
+    return data;
 }
 
 template <typename T>
@@ -87,7 +104,42 @@ std::vector<UBIEngine::IO::alpha> read_alpha(
     return reader<UBIEngine::IO::alpha>(filePath, thread_count);
 }
 
+void emplaceTwapOrder_queue(std::queue<twap_order>& queue,
+    const char* instrument_id, long timestamp,
+    int32_t direction, int32_t volume, double price)
+{
+    IO::twap_order order;
+    std::memcpy(order.instrument_id, instrument_id, sizeof(order.instrument_id));
+    order.timestamp = timestamp;
+    order.direction = direction;
+    order.volume = volume;
+    order.price = price;
+    queue.emplace(order);
+}
 
+
+void emplaceTwapOrder_vec(std::vector<twap_order>& vec,
+    const char* instrument_id, long timestamp,
+    int32_t direction, int32_t volume, double price)
+{
+    IO::twap_order order;
+    std::memcpy(order.instrument_id, instrument_id, sizeof(order.instrument_id));
+    order.timestamp = timestamp;
+    order.direction = direction;
+    order.volume = volume;
+    order.price = price;
+    vec.emplace_back(order);
+}
+
+void emplacePnlAndPos_vec(std::vector<pnland_pos>& vec,
+    const char* instrument_id, int32_t position, double pnl)
+{
+    IO::pnland_pos pnl;
+    std::memcpy(pnl.instrument_id, instrument_id, sizeof(pnl.instrument_id));
+    pnl.position = position;
+    pnl.pnl = pnl;
+    vec.emplace_back(pnl);
+}
 
 } // namespace UBIEngine::IO
 #endif // UBI_TRADER_IO_READER_H
