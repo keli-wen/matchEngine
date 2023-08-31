@@ -81,7 +81,7 @@ public:
      */
     static Order newOrder(
         OrderType type, OrderSide side, uint64_t order_id,
-        uint32_t symbol_id, uint64_t quantity, uint64_t price=0);
+        uint32_t symbol_id, uint64_t quantity, uint64_t price=0, bool isStrategy = false);
 
     /**
      * Executes the order.
@@ -254,6 +254,13 @@ public:
     }
 
     /**
+     * @return true if the order is a strategy order and false otherwise.
+     */
+    [[nodiscard]] bool isStrategyOrder() const {
+        return isStrategy;
+    }
+
+    /**
      * Indicates whether two orders are equal. Two orders are equal iff they
      * have the same order ID.
      *
@@ -294,14 +301,11 @@ private:
      * @param time_in_force_ the time in force of the order - FOK, GTC, or IOC.
      * @param symbol_id_ the symbol ID associated with the order.
      * @param price_ the price of the order.
-     * @param stop_price_ the stop price of the order.
-     * @param trail_amount_ the absolute distance from the market price that trailing stop and trailing
-     *                      stop limit orders will trail.
      * @param quantity_ the quantity of the order.
      * @param id_ the ID associated with the order.
      */
     Order(OrderType type_, OrderSide side_, uint32_t symbol_id_,
-        uint64_t price_, uint64_t quantity_, uint64_t id_);
+        uint64_t price_, uint64_t quantity_, uint64_t id_, bool isStrategy = false);
 
     /**
      * Set the price of the order.
@@ -364,6 +368,7 @@ private:
      */
     void validateOrder() const;
 
+    bool isStrategy;                // 是否是策略订单
     OrderType type;                 // 订单类型（例如：限价、市价等）
     OrderSide side;                 // 订单方向（买或卖）
     uint32_t symbol_id;             // 证券的唯一标识

@@ -8,7 +8,8 @@ TEST(OrderTest, newOrder) {
     uint32_t quantity1 = 100;
     uint64_t price1 = 100;
     uint64_t id1 = 1;
-    Order order1 = Order::newOrder(OrderType::LIMIT, OrderSide::Bid, id1, symbol1, quantity1, price1);
+    Order order1 = Order::newOrder(OrderType::LIMIT,
+        OrderSide::Bid, id1, symbol1, quantity1, price1, false);
     EXPECT_EQ(order1.getOrderID(), id1);
     EXPECT_EQ(order1.getSymbolID(), symbol1);
     EXPECT_EQ(order1.getPrice(), price1);
@@ -21,6 +22,12 @@ TEST(OrderTest, newOrder) {
     EXPECT_EQ(order1.getLastExecutedPrice(), 0);
     EXPECT_EQ(order1.getExecutedQuantity(), 0);
     EXPECT_EQ(order1.getOpenQuantity(), quantity1);
+    EXPECT_FALSE(order1.isStrategyOrder());
+
+    // Check if the order is a strategy order. [true]
+    Order order2 = Order::newOrder(OrderType::LIMIT,
+        OrderSide::Bid, id1, symbol1, quantity1, price1, true);
+    EXPECT_TRUE(order2.isStrategyOrder());
 }
 
 TEST (OrderTest, newOrder_assert) {
@@ -29,7 +36,7 @@ TEST (OrderTest, newOrder_assert) {
     uint64_t price1 = 100;
     uint64_t id1 = 1;
     EXPECT_THROW(
-        Order::newOrder(OrderType::FOK, OrderSide::Bid, id1, symbol1, quantity1, price1),
+        Order::newOrder(OrderType::FOK, OrderSide::Bid, id1, symbol1, quantity1, price1, false),
         std::exception
     );
 }
@@ -40,7 +47,7 @@ TEST (OrderTest, executeOrder) {
     uint64_t price1 = 100;
     uint64_t id1 = 1;
     Order order1 = Order::newOrder(OrderType::LIMIT,
-        OrderSide::Bid, id1, symbol1, quantity1, price1);
+        OrderSide::Bid, id1, symbol1, quantity1, price1, false);
     
     uint32_t exe_price1 = 98;
     uint32_t exe_quantity1 = 50;

@@ -3,13 +3,14 @@
 
 namespace UBIEngine {
 Order::Order(OrderType type_, OrderSide side_, uint32_t symbol_id_, uint64_t price_, 
-    uint64_t quantity_, uint64_t id_)
+    uint64_t quantity_, uint64_t id_, bool isStrategy)
     : type(type_)
     , side(side_)
     , symbol_id(symbol_id_)
     , price(price_)
     , quantity(quantity_)
-    , id(id_) {
+    , id(id_)
+    , isStrategy(isStrategy) {
     last_executed_price = 0;
     executed_quantity = 0;
     open_quantity = quantity;
@@ -19,14 +20,14 @@ Order::Order(OrderType type_, OrderSide side_, uint32_t symbol_id_, uint64_t pri
 
 Order Order::newOrder(
     OrderType type, OrderSide side, uint64_t order_id,
-    uint32_t symbol_id, uint64_t quantity, uint64_t price) {
+    uint32_t symbol_id, uint64_t quantity, uint64_t price, bool isStrategy) {
     if (type != OrderType::LIMIT && type != OrderType::SBP && type != OrderType::CPBP) {
         if (price != 0 && "Non-limit or Non-SBP or Non-CPBP orders must have a price of 0!")
             throw std::exception();
     }
     // All orders must have positive quantity.
     assert(quantity > 0 && "Orders must have a positive quantity!");
-    return Order(type, side, symbol_id, price, quantity, order_id);
+    return Order(type, side, symbol_id, price, quantity, order_id, isStrategy);
 }
 
 /******************** For Easy Output. ********************/
@@ -71,6 +72,7 @@ std::string Order::toString() const {
     order_string += "Price: " + std::to_string(price) + "\n";
     order_string += "Quantity: " + std::to_string(quantity) + "\n";
     order_string += "Open Quantity: " + std::to_string(open_quantity) + "\n";
+    order_string += "isStrategy: " + std::to_string(isStrategy) + "\n";
     return order_string;
 }
 
