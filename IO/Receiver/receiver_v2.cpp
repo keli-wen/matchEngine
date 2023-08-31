@@ -122,6 +122,12 @@ public:
 
             char filename[64];  // large enough buffer to store the filename
             snprintf(filename, sizeof(filename), "%04d%02d%02d_%d_%d", year, month, day, x, y);
+            std::cout << "Year: " << year << std::endl;
+            std::cout << "Month: " << month << std::endl;
+            std::cout << "Day: " << day << std::endl;
+            std::cout << "X: " << x << std::endl;
+            std::cout << "Y: " << y << std::endl;
+
             char filename_true[64];
             sprintf(filename_true, "%04d%02d%02d_%d_%d", year, month, day, x, y);
 
