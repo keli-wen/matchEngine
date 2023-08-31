@@ -10,11 +10,14 @@ PnlHelper::PnlHelper(
     , cash(0) {}
 
 const int64_t PnlHelper::calculatePnl(uint64_t current_price) const {
+    int64_t current_price_ = int64_t(current_price);
+    int64_t position_ = int64_t(position);
+    int64_t prev_close_price_ = int64_t(prev_close_price);
+    int64_t prev_position_ = int64_t(prev_position);
     int64_t current_valuation =
-        static_cast<int64_t>(position) * current_price;
+        static_cast<int64_t>(position_) * current_price_;
     int64_t prev_valuation =
-        static_cast<int64_t>(prev_position) * prev_close_price;
-    
+        static_cast<int64_t>(prev_position_) * prev_close_price_;
     return current_valuation - prev_valuation + cash;
 }
 
@@ -37,8 +40,8 @@ void PnlHelper::updateAccount(OrderSide side,
 std::string PnlHelper::toString() const {
     std::string pnl_helper_string;
     pnl_helper_string += "Previous Close Price: " + std::to_string(prev_close_price) + "\n";
-    pnl_helper_string += "Position: " + std::to_string(position) + "\n";
     pnl_helper_string += "Previous Position: " + std::to_string(prev_position) + "\n";
+    pnl_helper_string += "Position: " + std::to_string(position) + "\n";
     pnl_helper_string += "Cash: " + std::to_string(cash) + "\n";
     return pnl_helper_string;
 }

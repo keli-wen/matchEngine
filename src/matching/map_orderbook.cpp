@@ -11,7 +11,11 @@ MapOrderBook::MapOrderBook(
     : symbol_id(symbol_id_)
     , last_traded_price(0)
     , pnl_helper(previous_close_price_, previous_position_)
-{}
+{
+    orders.clear();
+    bid_levels.clear();
+    ask_levels.clear();
+}
 
 void MapOrderBook::addOrder(Order order) {
     switch (order.getType()) {
@@ -109,6 +113,13 @@ void MapOrderBook::deleteOrder(uint64_t order_id, bool notification) {
 }
 
 uint64_t MapOrderBook::getBasePrice(OrderSide side) const {
+    // std::cout << "====== getBasePrice ======" << std::endl;
+    // std::cout << "| bestAsk: " << bestAsk() << std::endl;
+    // std::cout << "| bestBid: " << bestBid() << std::endl;
+    // std::cout << "| lastTradedPrice: " << lastTradedPrice() << std::endl;
+    // std::cout << "| previousClosePrice: " << previousClosePrice() << std::endl;
+    // std::cout << "==========================\n" << std::endl;
+
     if(side == OrderSide::Bid) {
         // For buy orders
         if(!ask_levels.empty()) {
@@ -134,6 +145,47 @@ uint64_t MapOrderBook::getBasePrice(OrderSide side) const {
     }
 }
 
+uint64_t MapOrderBook::getDownLimit(OrderSide side) const {
+    uint64_t basePrice = getBasePrice(side);
+    // Assuming minimal increment is 1.
+    uint64_t minIncrement = 1;
+
+    // 10% decrease.
+    uint64_t minLimit =
+        static_cast<uint64_t>(previousClosePrice() * 0.90 + 0.5);
+
+    uint64_t minBase =
+        static_cast<uint64_t>(basePrice * 0.98 + 0.5);
+
+    uint64_t adjustedMin = 
+        (basePrice > 10 * minIncrement) 
+            ? std::min(minBase, basePrice - 10 * minIncrement) 
+            : 0;
+    if (side == OrderSide::Bid)
+        return minLimit;
+    else
+        return std::max(adjustedMin, minLimit);
+}
+
+uint64_t MapOrderBook::getUpLimit(OrderSide side) const {
+        uint64_t basePrice = getBasePrice(side);
+    // Assuming minimal increment is 1.
+    uint64_t minIncrement = 1;
+
+    // 10% increase.
+    uint64_t maxLimit = 
+        static_cast<uint64_t>(previousClosePrice() * 1.10 + 0.5);
+    uint64_t maxBase = 
+            static_cast<uint64_t>(basePrice * 1.02 + 0.5);
+    uint64_t adjustedMax =
+            std::max(maxBase, basePrice + 10 * minIncrement);
+
+    if (side == OrderSide::Bid)
+        return std::min(adjustedMax, maxLimit);
+    else
+        return maxLimit;
+}
+
 bool MapOrderBook::isPriceWithinAllowedRange(const Order &order) const {
     assert(order.getType() == OrderType::LIMIT
         && "Only limit orders can be checked against allowed range!");
@@ -144,14 +196,14 @@ bool MapOrderBook::isPriceWithinAllowedRange(const Order &order) const {
 
     // 10% increase.
     uint64_t maxLimit = 
-        static_cast<uint64_t>(previousClosePrice() * 1.10);
+        static_cast<uint64_t>(previousClosePrice() * 1.10 + 0.5);
     // 10% decrease.
     uint64_t minLimit =
-        static_cast<uint64_t>(previousClosePrice() * 0.90);
+        static_cast<uint64_t>(previousClosePrice() * 0.90 + 0.5);
     if(order.getSide() == OrderSide::Bid) {
         // 2% increase.
         uint64_t maxBase = 
-            static_cast<uint64_t>(basePrice * 1.02);
+            static_cast<uint64_t>(basePrice * 1.02 + 0.5);
         
 
         uint64_t adjustedMax =
@@ -169,7 +221,7 @@ bool MapOrderBook::isPriceWithinAllowedRange(const Order &order) const {
     } else { // SELL order.
         // 2% decrease.
         uint64_t minBase =
-            static_cast<uint64_t>(basePrice * 0.98);
+            static_cast<uint64_t>(basePrice * 0.98 + 0.5);
 
         uint64_t adjustedMin = 
             (basePrice > 10 * minIncrement) 
@@ -333,6 +385,7 @@ void MapOrderBook::match(Order &order) {
     }
 }
 
+static int trade_count = 0;
 void MapOrderBook::executeOrders(
     Order &ask,
     Order &bid,
@@ -357,6 +410,11 @@ void MapOrderBook::executeOrders(
         pnl_helper.updateAccount(ask.getSide(),
             ask.getLastExecutedPrice(), ask.getLastExecutedQuantity());
     }
+
+    // if (ask.symbol_id == 10 || bid.symbol_id == 10) {
+    //     double price = executing_price / 100.0;
+    //     printf("[%d] trade: price=%.6lf, volume=%d\n", trade_count++, price, matched_quantity);
+    // }
 }
 
 /* 用于服务 TYPE 为 FOK 的订单 */

@@ -61,6 +61,10 @@ public:
      */
     uint64_t getBasePrice(OrderSide side) const;
 
+    uint64_t getDownLimit(OrderSide side) const;
+
+    uint64_t getUpLimit(OrderSide side) const;
+
     /**
      * @param order the order to add to the book. (must be LIMIT order)
      * @return `[bool]` if the order's price is within the allowed range.
@@ -142,6 +146,13 @@ public:
      */
     [[nodiscard]] uint32_t previousPosition() const {
         return pnl_helper.getPrevPosition();
+    }
+
+    /**
+     * @return the pnl helper.
+     */
+    [[nodiscard]] const PnlHelper& getPnlHelper() const {
+        return pnl_helper;
     }
 
     /**
