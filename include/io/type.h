@@ -40,11 +40,10 @@ struct pnland_pos {
 
 template<typename T>
 class VectorQueue {
-private:
+public:
     std::vector<T> data;
     size_t frontIndex = 0;  // 这是队列的“头部”
 
-public:
     // 使用已存在的vector来构造
     VectorQueue(std::vector<T>&& vec) : data(std::move(vec)) {}
 
@@ -83,6 +82,10 @@ public:
 
     void push(T&& value) {
         data.push_back(std::move(value));
+    }
+
+    void reset() {
+        frontIndex = 0;
     }
 };
 
