@@ -104,7 +104,14 @@ std::vector<UBIEngine::IO::alpha> read_alpha(
     return reader<UBIEngine::IO::alpha>(filePath, thread_count);
 }
 
-void emplaceTwapOrder_queue(std::queue<twap_order>& queue,
+// For priority_queue IO::twap_order
+struct priority_cmp {
+    bool operator()(const IO::twap_order& a, const IO::twap_order& b) {
+        return a.timestamp > b.timestamp;
+    }
+};
+
+void emplaceTwapOrder_queue(std::priority_queue<twap_order, std::vector<twap_order>, priority_cmp>& queue,
     const char* instrument_id, long timestamp,
     int32_t direction, int32_t volume, double price)
 {
@@ -131,10 +138,10 @@ void emplaceTwapOrder_vec(std::vector<twap_order>& vec,
     vec.emplace_back(order);
 }
 
-void emplacePnlAndPos_vec(std::vector<pnland_pos>& vec,
+void emplacePnlAndPos_vec(std::vector<pnl_and_pos>& vec,
     const char* instrument_id, int32_t position, double pnl)
 {
-    IO::pnland_pos pnl_and_pos;
+    IO::pnl_and_pos pnl_and_pos;
     std::memcpy(pnl_and_pos.instrument_id, instrument_id, sizeof(pnl_and_pos.instrument_id));
     pnl_and_pos.position = position;
     pnl_and_pos.pnl = pnl;
