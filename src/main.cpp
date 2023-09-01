@@ -9,6 +9,7 @@
 #include <fstream>
 #include <queue>
 #include <chrono>
+#include <boost/filesystem.hpp>
 
 using namespace UBIEngine;
 
@@ -138,7 +139,7 @@ bool writeToFile(const std::vector<T>& data, const std::string& filename) {
 }
 
 // void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
-void solve(std::string& dataset_dir_path) {
+void solve(std::string& dataset_dir_path, std::string& fileActPath) {
     /* Data Pre-Process */
     // auto order_logs = IO::read_order_log(dataset_dir_path + "/order_log");
     auto order_logs = IO::reader_sync<IO::order_log>(dataset_dir_path + "/order_log");
@@ -359,14 +360,16 @@ void solve(std::string& dataset_dir_path) {
         /* 排序后写到本地 */
         Utils::multiThreadSort(ans, Utils::my_compare_twap);
         Utils::multiThreadSort(pnls, Utils::my_compare_pnl);
-        std::string target_twap_name = "/home/team5/output/twap_order/20160202_" +
-            std::to_string(session_num) + "_" + std::to_string(session_length);
-        std::string target_pnl_name = "/home/team5/output/pnl_and_position/20160202_" +
-            std::to_string(session_num) + "_" + std::to_string(session_length);
+        std::string target_twap_name = "/home/team5/output/twap_order/" + fileActPath
+            + "_" + std::to_string(session_num) + "_" + std::to_string(session_length);
+        std::string target_pnl_name = "/home/team5/output/pnl_and_position/" + fileActPath
+            + "_" + std::to_string(session_num) + "_" + std::to_string(session_length);
         writeToFile<IO::twap_order>(ans, target_twap_name);
+        std::cout << "Finish writing to: " << target_twap_name << std::endl;
         writeToFile<IO::pnl_and_pos>(pnls, target_pnl_name);
-        std::string file_name_ = "20160202_" +
-            std::to_string(session_num) + "_" + std::to_string(session_length);
+        std::cout << "Finish writing to: " << target_pnl_name << std::endl;
+        // std::string file_name_ = "20150101_" +
+            // std::to_string(session_num) + "_" + std::to_string(session_length);
 
         // auto gSocket = IO::GlobalSocket("172.28.142.142", 8081);
         // auto finish = async_send_data(gSocket, file_name_, pnls, ans);
@@ -379,8 +382,12 @@ void solve(std::string& dataset_dir_path) {
 }
 
 int main() {
-    std::string dataset_dir_path = "/mnt/data/20180404";
-    // solve(dataset_dir_path, gSocket);
-    solve(dataset_dir_path);
+    boost::filesystem::path p("/mnt/data");
+    for (auto& entry : boost::filesystem::directory_iterator(p)) {
+        std::cout << entry.path().filename().string() << std::endl;
+        std::string dataset_dir_path = entry.path().string();
+        std::string fileActPath = entry.path().filename().string();
+        solve(dataset_dir_path, fileActPath);
+    }
     return 0;
 }
