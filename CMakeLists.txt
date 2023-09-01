@@ -17,19 +17,33 @@ set(TRADER_INSTALL_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 set(TRADER_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR})
 
 # 添加 Google Test 的路径
-set(GTEST_PATH $ENV{HOME}/googletest)
-include_directories(${GTEST_PATH}/googletest/include)
-link_directories(${GTEST_PATH}/build/lib)
+# set(GTEST_PATH $ENV{HOME}/googletest)
+# include_directories(${GTEST_PATH}/googletest/include)
+# link_directories(${GTEST_PATH}/build/lib)
+# 添加 Google Test 的路径
+set(GTEST_PATH "${CMAKE_SOURCE_DIR}/external/googletest")
+
+# 注意：现在 Google Test 也使用 CMake。所以，最佳实践是通过 add_subdirectory 来包含它。
+# 这样，你可以直接链接到 gtest 和 gtest_main 目标。
+add_subdirectory(${GTEST_PATH})
 
 # Boost 配置
-set(BOOST_ROOT $ENV{HOME}/local)
-set(BOOST_INCLUDE_PATH $ENV{HOME}/local/include/boost)
-set(BOOST_LIB_PATH $ENV{HOME}/local/lib/boost)
-find_package(Boost REQUIRED)
+# 由于 boost::intrusive 是 header-only, 所以不需要寻找特定的库
+set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/external/boost")
+set(BOOST_INCLUDEDIR "${BOOST_ROOT}/include")
+set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
+
+find_package(Boost REQUIRED HINTS ${BOOST_ROOT})
 include_directories(${BOOST_INCLUDE_PATH})
+message(STATUS "Found Boost version: ${Boost_VERSION}")
+# set(BOOST_ROOT $ENV{HOME}/local)
+# set(BOOST_INCLUDE_PATH $ENV{HOME}/local/include/boost)
+# set(BOOST_LIB_PATH $ENV{HOME}/local/lib/boost)
+# find_package(Boost REQUIRED)
+# include_directories(${BOOST_INCLUDE_PATH})
 
 # 链接 Boost 库
-link_directories(${BOOST_LIB_PATH})
+# link_directories(${BOOST_LIB_PATH})
 
 # 包含项目的 include 目录
 include_directories(${CMAKE_SOURCE_DIR}/include)
