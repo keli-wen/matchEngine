@@ -7,9 +7,12 @@ ConcurrentMarket::ConcurrentMarket(uint8_t num_threads)
     , symbol_submission_index(0)
 {
     assert(num_threads > 0 && "The number of threads must be positive!");
-    orderbook_handlers.reserve(num_threads);
+    orderbook_handlers.clear();
+    id_to_submission_index.clear();
+    id_to_symbol.clear();
     for (uint8_t i = 0; i < num_threads; ++i)
         orderbook_handlers.push_back(std::make_unique<OrderBookHandler>());
+    std::cout << "Finish Concurrent-Market constructor" << std::endl;
 }
 
 void ConcurrentMarket::addSymbol(
@@ -23,6 +26,7 @@ void ConcurrentMarket::addSymbol(
     id_to_symbol.insert({symbol_id, std::make_unique<Symbol>(symbol_id, symbol_name)});
     id_to_submission_index.insert({symbol_id, symbol_submission_index});
     OrderBookHandler *orderbook_handler = orderbook_handlers[symbol_submission_index].get();
+    // std::cout << "Add Symbol" << std::endl;
     thread_pool.submitTask(symbol_submission_index,
         [=] { 
             orderbook_handler->addOrderBook(
@@ -47,6 +51,8 @@ void ConcurrentMarket::deleteSymbol(uint32_t symbol_id)
 void ConcurrentMarket::addOrder(const Order &order)
 {
     uint32_t submission_index = getSubmissionIndex(order.getSymbolID());
+    std::cout << "Sumission index: " << submission_index << std::endl;
+    assert (submission_index == 0 && "Submission index must be 0");
     OrderBookHandler *orderbook_handler = orderbook_handlers[submission_index].get();
     thread_pool.submitTask(submission_index, [=] { orderbook_handler->addOrder(order); });
 }
@@ -78,10 +84,38 @@ const uint64_t ConcurrentMarket::getBasePrice(uint32_t symbol_id, OrderSide side
     return orderbook_handler->getOrderBook(symbol_id)->getBasePrice(side);
 }
 
-const PnlHelper& ConcurrentMarket::getPnlHelper(uint32_t symbol_id) {
+const uint64_t ConcurrentMarket::getDownLimit(uint32_t symbol_id, OrderSide side)
+{
+    uint32_t submission_index = getSubmissionIndex(symbol_id);
+    OrderBookHandler *orderbook_handler = orderbook_handlers[submission_index].get();   
+    return orderbook_handler->getOrderBook(symbol_id)->getDownLimit(side);
+}
+
+const uint64_t ConcurrentMarket::getUpLimit(uint32_t symbol_id, OrderSide side)
+{
+    uint32_t submission_index = getSubmissionIndex(symbol_id);
+    OrderBookHandler *orderbook_handler = orderbook_handlers[submission_index].get();
+    return orderbook_handler->getOrderBook(symbol_id)->getUpLimit(side);
+}
+
+const PnlHelper& ConcurrentMarket::getPnlHelper(uint32_t symbol_id) const {
     uint32_t submission_index = getSubmissionIndex(symbol_id);
     OrderBookHandler *orderbook_handler = orderbook_handlers[submission_index].get();
     return orderbook_handler->getOrderBook(symbol_id)->getPnlHelper();
+}
+
+const int64_t ConcurrentMarket::calculatePnl(uint32_t symbol_id) const {
+    uint32_t submission_index = getSubmissionIndex(symbol_id);
+    OrderBookHandler *orderbook_handler = orderbook_handlers[submission_index].get();
+    auto& pnl_helper = getPnlHelper(symbol_id);
+    uint64_t last_execute_price = orderbook_handler->getOrderBook(symbol_id)->lastTradedPrice();
+    return pnl_helper.calculatePnl(last_execute_price);
+}
+
+const uint32_t ConcurrentMarket::getSubmissionIndex(uint32_t symbol_id) const
+{
+    auto it = id_to_submission_index.find(symbol_id);
+    return it == id_to_submission_index.end() ? 0 : it->second;
 }
 
 uint32_t ConcurrentMarket::getSubmissionIndex(uint32_t symbol_id)

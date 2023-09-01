@@ -13,6 +13,60 @@
 using namespace UBIEngine;
 
 // 假设 IO::pnl_and_pos 和 IO::twap_order 都有大小信息
+bool send_data(
+    const IO::GlobalSocket& gSocket,
+    const std::string& filename,   // <-- File name to be sent
+    const std::vector<IO::pnl_and_pos>& pnls,
+    const std::vector<IO::twap_order>& ans)
+{
+    int sockfd = gSocket.getSocket();
+
+    // Parse and Send the filename
+    int year, month, day, x, y;
+    sscanf(filename.c_str(), "%4d%2d%2d_%d_%d", &year, &month, &day, &x, &y);
+    std::cout << "filename: " << filename << std::endl;
+    std::cout << "year: " << year << " month: " << month << " day: "
+        << day << " x: " << x << " y: " << y << std::endl;
+    ssize_t bytesWritten = write(sockfd, &year, sizeof(year));
+    if (bytesWritten != sizeof(year)) {
+        return false;
+    }
+    bytesWritten = write(sockfd, &month, sizeof(month));
+    if (bytesWritten != sizeof(month)) {
+        return false;
+    }
+    bytesWritten = write(sockfd, &day, sizeof(day));
+    if (bytesWritten != sizeof(day)) {
+        return false;
+    }
+    bytesWritten = write(sockfd, &x, sizeof(x));
+    if (bytesWritten != sizeof(x)) {
+        return false;
+    }
+    bytesWritten = write(sockfd, &y, sizeof(y));
+    if (bytesWritten != sizeof(y)) {
+        return false;
+    }
+
+    // Send pnls
+    ssize_t bytesToSend = pnls.size() * sizeof(IO::pnl_and_pos);
+    bytesWritten = write(sockfd, pnls.data(), bytesToSend);
+    if (bytesWritten != bytesToSend) {
+        return false;
+    }
+    std::cout << "Successfully sent pnls!" << std::endl;
+
+    // Send ans
+    bytesToSend = ans.size() * sizeof(IO::twap_order);
+    bytesWritten = write(sockfd, ans.data(), bytesToSend);
+    if (bytesWritten != bytesToSend) {
+        return false;
+    }
+    std::cout << "Successfully sent ans!" << std::endl;
+
+    return true;
+}
+
 std::future<bool> async_send_data(
     const IO::GlobalSocket& gSocket,
     const std::string& filename,   // <-- File name to be sent
@@ -55,6 +109,7 @@ std::future<bool> async_send_data(
         if (bytesWritten != bytesToSend) {
             return false;
         }
+        std::cout << "Successfully sent pnls!" << std::endl;
 
         // Send ans
         bytesToSend = ans.size() * sizeof(IO::twap_order);
@@ -62,6 +117,7 @@ std::future<bool> async_send_data(
         if (bytesWritten != bytesToSend) {
             return false;
         }
+        std::cout << "Successfully sent ans!" << std::endl;
 
         return true;
     });
@@ -81,7 +137,8 @@ bool writeToFile(const std::vector<T>& data, const std::string& filename) {
     return true;
 }
 
-void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
+// void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
+void solve(std::string& dataset_dir_path) {
     /* Data Pre-Process */
     // auto order_logs = IO::read_order_log(dataset_dir_path + "/order_log");
     auto order_logs = IO::reader_sync<IO::order_log>(dataset_dir_path + "/order_log");
@@ -173,6 +230,7 @@ void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
                     double basePrice_t = static_cast<double>(basePrice) / 100;
                     double down_limit = static_cast<double>(market.getDownLimit(symbol_id, side)) / 100;
                     double up_limit = static_cast<double>(market.getUpLimit(symbol_id, side)) / 100;
+                    std::cout << "Symbol_id: " << symbol_id << std::endl;
                     if (raw_order.type == 0)
                         printf("history order: timestamp=%d, direction=%d, order_type=%d, volume=%d, price=%.6lf, base_price=%.6lf, up_limit=%.6lf, down_limit=%.6lf\n",
                             raw_order.timestamp, raw_order.direction, raw_order.type, raw_order.volume, price_t, basePrice_t, up_limit, down_limit);
@@ -253,13 +311,13 @@ void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
                 );
 
                 // ========================================================================
-                if (symbol_id == symbol_id_tar || symbol_id_tar == -1) {
-                    printf("twap order: timestamp=%d, direction=%d, volume=%d, price=%.6lf\n",
-                            strategy_order.timestamp,
-                            strategy_order.direction,
-                            strategy_order.volume,
-                            price_double);
-                }
+                // if (symbol_id == symbol_id_tar || symbol_id_tar == -1) {
+                //     printf("twap order: timestamp=%d, direction=%d, volume=%d, price=%.6lf\n",
+                //             strategy_order.timestamp,
+                //             strategy_order.direction,
+                //             strategy_order.volume,
+                //             price_double);
+                // }
                 // ========================================================================
                 // 如果 volume == 0, 则不进入撮合系统.
                 if (strategy_order.volume == 0) continue;
@@ -275,7 +333,7 @@ void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
                 );
                 market.addOrder(order);
             }
-            ++cnt;
+            // ++cnt;
             // if (cnt >= 20000) break;
         }
 
@@ -309,8 +367,11 @@ void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
         writeToFile<IO::pnl_and_pos>(pnls, target_pnl_name);
         std::string file_name_ = "20160202_" +
             std::to_string(session_num) + "_" + std::to_string(session_length);
-        async_send_data(gSocket, file_name_, pnls, ans);
 
+        // auto gSocket = IO::GlobalSocket("172.28.142.142", 8081);
+        // auto finish = async_send_data(gSocket, file_name_, pnls, ans);
+        // finish.wait();
+        // auto finish = send_data(gSocket, file_name_, pnls, ans);
         order_queue.reset();
         alpha_queue.reset();
         while (!strategy_queue.empty()) strategy_queue.pop();
@@ -318,8 +379,8 @@ void solve(std::string& dataset_dir_path, IO::GlobalSocket &gSocket) {
 }
 
 int main() {
-    auto gSocket = IO::GlobalSocket("172.28.142.142", 8080);
-    std::string dataset_dir_path = "/mnt/data/20160202";
-    solve(dataset_dir_path, gSocket);
+    std::string dataset_dir_path = "/mnt/data/20180404";
+    // solve(dataset_dir_path, gSocket);
+    solve(dataset_dir_path);
     return 0;
 }

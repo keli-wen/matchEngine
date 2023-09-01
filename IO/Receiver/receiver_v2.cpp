@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <future>
+#include <pthread.h>
 
 namespace IO {
 struct twap_order {
@@ -33,9 +35,27 @@ bool writeToFile(const std::vector<T>& data, const std::string& filename) {
 
     outFile.write(reinterpret_cast<const char*>(data.data()), data.size() * sizeof(T));
     outFile.close();
-    std::cout << "Done!" << std::endl;
     return true;
 }
+
+
+template<typename T>
+std::future<bool> asyncWriteToFile(const std::vector<T>& data, const std::string& filename) {
+    return std::async(std::launch::async, [data, filename]() -> bool {
+        std::ofstream outFile(filename, std::ios::binary);
+        
+        if (!outFile.is_open()) {
+            std::cerr << "Error: Couldn't open the file: " << filename << std::endl;
+            return false;
+        }
+
+        outFile.write(reinterpret_cast<const char*>(data.data()), data.size() * sizeof(T));
+        outFile.close();
+        std::cout << "Done writing to: " << filename << std::endl;
+        return true;
+    });
+}
+
 
 class GlobalReceiver {
 private:
@@ -134,14 +154,20 @@ public:
             std::cout << "Received filename: " << filename_true << std::endl;
 
             // Receive pnls and ans as usual
-            std::vector<IO::pnl_and_pos> pnls = receiveData<IO::pnl_and_pos>();
-            std::vector<IO::twap_order> ans = receiveData<IO::twap_order>();
+            std::vector<IO::pnl_and_pos> pnls;
+            std::vector<IO::twap_order> ans;
+            receiveData<IO::pnl_and_pos>(pnls);
+            receiveData<IO::twap_order>(ans);
+
+            std::cout << "Finished receiving data!" << std::endl;
 
             std::string filename_str = std::string(filename_true);
             std::string filename_twap = "/home/team5/output/twap_order/" + filename_str;
             std::string filename_pnl = "/home/team5/output/pnl_and_pos/" + filename_str;
             writeToFile<IO::twap_order>(ans, filename_twap);
             writeToFile<IO::pnl_and_pos>(pnls, filename_pnl);
+            // auto twapFuture = asyncWriteToFile<IO::twap_order>(ans, filename_twap);
+            // auto pnlFuture = asyncWriteToFile<IO::pnl_and_pos>(pnls, filename_pnl);
 
             
             // Here you can process the received data and filename as needed.
@@ -149,21 +175,33 @@ public:
     }
 
     template <typename T>
-    std::vector<T> receiveData() {
-        std::vector<T> dataVec;
+    void receiveData(std::vector<T> &dataVec) {
         T dataItem;
         ssize_t bytesReceived = read(client_sockfd, &dataItem, sizeof(T));
         while (bytesReceived == sizeof(T)) {  // Loop to receive all data of type T
             dataVec.push_back(dataItem);
             bytesReceived = read(client_sockfd, &dataItem, sizeof(T));
         }
-        return dataVec;
     }
+    // template <typename T>
+    // void receiveData(std::vector<T> &dataVec) {
+    //     constexpr size_t BUFFER_SIZE = 1024;  // Or other suitable size depending on your needs
+    //     char buffer[BUFFER_SIZE];
+    //     ssize_t bytesReceived;
+
+    //     while ((bytesReceived = read(client_sockfd, buffer, BUFFER_SIZE)) > 0) {
+    //         size_t itemsReceived = bytesReceived / sizeof(T);
+    //         for (size_t i = 0; i < itemsReceived; ++i) {
+    //             T* dataPtr = reinterpret_cast<T*>(&buffer[i * sizeof(T)]);
+    //             dataVec.push_back(*dataPtr);
+    //         }
+    //     }
+    // }
 };
 
 int main() {
     try {
-        GlobalReceiver receiver(8080);
+        GlobalReceiver receiver(8081);
         receiver.waitForConnection();
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

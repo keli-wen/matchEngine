@@ -91,7 +91,13 @@ public:
      */
     const uint64_t getBasePrice(uint32_t symbol_id, OrderSide side);
 
-    const PnlHelper& getPnlHelper(uint32_t symbol_id);
+    const uint64_t getUpLimit(uint32_t symbol_id, OrderSide side);
+
+    const uint64_t getDownLimit(uint32_t symbol_id, OrderSide side);
+
+    const PnlHelper& getPnlHelper(uint32_t symbol_id) const ;
+
+    const int64_t calculatePnl(uint32_t symbol_id) const ;
 
     /**
      * @return the string representation of the market.
@@ -118,6 +124,8 @@ private:
      * @return the submission index associated with the symbol ID.
      */
     uint32_t getSubmissionIndex(uint32_t symbol_id);
+
+    const uint32_t getSubmissionIndex(uint32_t symbol_id) const;
 
     /**
      * Increments the symbol submission index modulo the number of orderbook handlers.
