@@ -1,9 +1,6 @@
 [submodule "external/boost_intrusive"]
 	path = external/boost_intrusive
 	url = https://github.com/boostorg/intrusive
-[submodule "external/boost"]
-	path = external/boost
-	url = https://github.com/boostorg/boost
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
