@@ -360,9 +360,9 @@ void solve(std::string& dataset_dir_path, std::string& fileActPath) {
         /* 排序后写到本地 */
         Utils::multiThreadSort(ans, Utils::my_compare_twap);
         Utils::multiThreadSort(pnls, Utils::my_compare_pnl);
-        std::string target_twap_name = "/home/team5/output/twap_order/" + fileActPath
+        std::string target_twap_name = "../data/output_data/twap_order/" + fileActPath
             + "_" + std::to_string(session_num) + "_" + std::to_string(session_length);
-        std::string target_pnl_name = "/home/team5/output/pnl_and_position/" + fileActPath
+        std::string target_pnl_name = "../data/output_data/pnl_and_position/" + fileActPath
             + "_" + std::to_string(session_num) + "_" + std::to_string(session_length);
         writeToFile<IO::twap_order>(ans, target_twap_name);
         std::cout << "Finish writing to: " << target_twap_name << std::endl;
@@ -382,7 +382,8 @@ void solve(std::string& dataset_dir_path, std::string& fileActPath) {
 }
 
 int main() {
-    boost::filesystem::path p("/mnt/data");
+    // Assume the input dataset path is {Project_Dir}/data/input_data.
+    boost::filesystem::path p("../data/input_data/");
     for (auto& entry : boost::filesystem::directory_iterator(p)) {
         std::cout << entry.path().filename().string() << std::endl;
         std::string dataset_dir_path = entry.path().string();

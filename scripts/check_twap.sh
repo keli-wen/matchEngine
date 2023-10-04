@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 定义目录路径
-DIR1="/home/team5/output/twap_order"
-DIR2="/mnt/output_adjuest/twap_order"
+DIR1="data/output_data/twap_order"
+DIR2="data/output_standard/twap_order"
 
 # 维护相等数量
 equal=0

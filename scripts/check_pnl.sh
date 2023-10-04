@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 定义目录路径
-DIR1="/home/team5/output/pnl_and_position"
-DIR2="/mnt/output_adjuest/pnl_and_position"
+DIR1="data/output_data/pnl_and_position"
+DIR2="data/output_standard/pnl_and_position"
 
 # 维护相等数量
 equal=0
