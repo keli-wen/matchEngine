@@ -44,6 +44,8 @@ install(TARGETS trader_lib DESTINATION ${TRADER_INSTALL_LIB_DIR})
 add_executable(engine_main src/main.cpp)
 # 必须链接 pthread 库，否则会报错。
 target_link_libraries(engine_main trader_lib pthread)
+# 记得链接 Boost 中的 filesystem
+target_link_libraries(engine_main Boost::filesystem)
 
 # 启用测试功能
 enable_testing()
