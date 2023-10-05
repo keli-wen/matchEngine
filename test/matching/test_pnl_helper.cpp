@@ -67,8 +67,8 @@ TEST(PnlHelperTest, toString) {
     std::string pnl_helper_string = pnl_helper.toString();
     EXPECT_EQ(pnl_helper_string,
               "Previous Close Price: 100\n"
-              "Position: 100\n"
               "Previous Position: 100\n"
+              "Position: 100\n"
               "Cash: 0\n");
 
 }
