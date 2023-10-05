@@ -46,6 +46,15 @@ install(TARGETS trader_lib DESTINATION ${TRADER_INSTALL_LIB_DIR})
 add_executable(engine_main src/main.cpp)
 target_link_libraries(engine_main trader_lib pthread Boost::filesystem)
 
+# Profiler `gprof` usage setup.
+add_executable(engine_main_gprof src/main.cpp)
+# Add -pg to support gprof running.
+target_compile_options(engine_main_gprof PRIVATE -pg)
+set_target_properties(engine_main_gprof PROPERTIES LINK_FLAGS "-pg")
+# Link necessary libraries.
+target_link_libraries(engine_main_gprof
+    trader_lib pthread Boost::filesystem)
+
 # 启用测试功能
 enable_testing()
 
@@ -82,3 +91,4 @@ endforeach()
 
 # Special target for engine_main.
 add_custom_target(engine_main_run COMMAND engine_main)
+add_custom_target(engine_main_gprof_run COMMAND engine_main_gprof)
