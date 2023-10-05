@@ -1,0 +1,137 @@
+Running Log:
+------
+20160202
+Start init symbol_manager and market!
+Finish Market constructor
+[Start]: 3_1
+[Done]: 3_1 Cost Time: 61.16s
+Finish writing to: ../data/output_data/twap_order/20160202_3_1
+Finish writing to: ../data/output_data/pnl_and_position/20160202_3_1
+Start init symbol_manager and market!
+Finish Market constructor
+[Start]: 3_3
+[Done]: 3_3 Cost Time: 61.485s
+Finish writing to: ../data/output_data/twap_order/20160202_3_3
+Finish writing to: ../data/output_data/pnl_and_position/20160202_3_3
+Start init symbol_manager and market!
+Finish Market constructor
+[Start]: 3_5
+[Done]: 3_5 Cost Time: 61.788s
+Finish writing to: ../data/output_data/twap_order/20160202_3_5
+Finish writing to: ../data/output_data/pnl_and_position/20160202_3_5
+Start init symbol_manager and market!
+Finish Market constructor
+[Start]: 5_2
+[Done]: 5_2 Cost Time: 61.905s
+Finish writing to: ../data/output_data/twap_order/20160202_5_2
+Finish writing to: ../data/output_data/pnl_and_position/20160202_5_2
+Start init symbol_manager and market!
+Finish Market constructor
+[Start]: 5_3
+[Done]: 5_3 Cost Time: 62.262s
+Finish writing to: ../data/output_data/twap_order/20160202_5_3
+Finish writing to: ../data/output_data/pnl_and_position/20160202_5_3
+[100%] Built target engine_main_run
+[ perf record: Woken up 195 times to write data ]
+[ perf record: Captured and wrote 49.556 MB perf.data (1292327 samples) ]
+
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 1M of event 'cycles'
+# Event count (approx.): 1087220977678
+#
+# Overhead  Command      Shared Object             Symbol                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+# ........  ...........  ........................  ................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+#
+     3.09%  engine_main  engine_main               [.] solve
+     3.07%  engine_main  engine_main               [.] UBIEngine::Order::Order
+     2.79%  engine_main  engine_main               [.] boost::intrusive::detail::destructor_impl<boost::intrusive::generic_hook<(boost::intrusive::algo_types)0, boost::intrusive::list_node_traits<void*>, boost::intrusive::dft_tag, (boost::intrusive::link_mode_type)1, (boost::intrusive::base_hook_type)1> >
+     2.51%  engine_main  engine_main               [.] UBIEngine::Order::Order
+     1.93%  engine_main  engine_main               [.] std::char_traits<char>::length
+     1.87%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::findIdx<unsigned int>
+     1.76%  engine_main  engine_main               [.] UBIEngine::OrderBookHandler::addOrder
+     1.59%  engine_main  engine_main               [.] robin_hood::hash_bytes
+     1.55%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::getBasePrice
+     1.48%  engine_main  engine_main               [.] boost::intrusive::list_base_hook<>::list_base_hook
+     1.45%  engine_main  engine_main               [.] boost::intrusive::list_base_hook<>::list_base_hook
+     1.34%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::order_log, std::allocator<UBIEngine::IO::order_log> >::size
+     1.28%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::keyToIdx<unsigned int const&>
+     1.27%  engine_main  engine_main               [.] UBIEngine::IO::VectorQueue<UBIEngine::IO::order_log>::empty
+     1.23%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::match
+     1.20%  engine_main  engine_main               [.] std::_Rb_tree<unsigned long, std::pair<unsigned long const, UBIEngine::Level>, std::_Select1st<std::pair<unsigned long const, UBIEngine::Level> >, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, UBIEngine::Level> > >::empty
+     1.12%  engine_main  engine_main               [.] robin_hood::hash_int
+     1.03%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, robin_hood::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, void>, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::findIdx<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >
+     0.97%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::addMarketOrder
+     0.86%  engine_main  engine_main               [.] UBIEngine::SymbolManager::getSymbolId
+     0.80%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::twap_order, std::allocator<UBIEngine::IO::twap_order> >::begin
+     0.79%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::end
+     0.78%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::get_root_node
+     0.73%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, robin_hood::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, void>, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::find
+     0.73%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::twap_order, std::allocator<UBIEngine::IO::twap_order> >::end
+     0.70%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::Iter<false>::Iter
+     0.69%  engine_main  engine_main               [.] __gnu_cxx::operator==<UBIEngine::IO::twap_order const*, std::vector<UBIEngine::IO::twap_order, std::allocator<UBIEngine::IO::twap_order> > >
+     0.68%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, robin_hood::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, void>, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::keyToIdx<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>
+     0.66%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::erase_and_dispose<boost::intrusive::detail::null_disposer>
+     0.66%  engine_main  engine_main               [.] boost::intrusive::list_base_hook<>::~list_base_hook
+     0.65%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::find
+     0.65%  engine_main  engine_main               [.] UBIEngine::IO::VectorQueue<UBIEngine::IO::order_log>::front
+     0.65%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::twap_order, std::allocator<UBIEngine::IO::twap_order> >::empty
+     0.61%  engine_main  engine_main               [.] UBIEngine::int2OrderType
+     0.61%  engine_main  libc-2.31.so              [.] __nss_database_lookup
+     0.60%  engine_main  engine_main               [.] UBIEngine::Order::Order
+     0.60%  engine_main  engine_main               [.] UBIEngine::Order::getPrice
+     0.60%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::push_back
+     0.57%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::clear_and_dispose<boost::intrusive::detail::null_disposer>
+     0.56%  engine_main  engine_main               [.] UBIEngine::OrderBookHandler::getOrderBook
+     0.56%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::isPriceWithinAllowedRange
+     0.56%  engine_main  engine_main               [.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>
+     0.55%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::get_root_node
+     0.54%  engine_main  engine_main               [.] __gnu_cxx::__normal_iterator<UBIEngine::IO::twap_order const*, std::vector<UBIEngine::IO::twap_order, std::allocator<UBIEngine::IO::twap_order> > >::__normal_iterator
+     0.53%  engine_main  engine_main               [.] std::map<unsigned long, UBIEngine::Level, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, UBIEngine::Level> > >::empty
+     0.53%  engine_main  engine_main               [.] std::__uniq_ptr_impl<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >::_M_ptr
+     0.52%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::alpha, std::allocator<UBIEngine::IO::alpha> >::size
+     0.52%  engine_main  engine_main               [.] UBIEngine::Order::execute
+     0.50%  engine_main  engine_main               [.] std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >::get
+     0.50%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::s_iterator_to
+     0.50%  engine_main  engine_main               [.] UBIEngine::Order::newOrder
+     0.48%  engine_main  engine_main               [.] UBIEngine::IO::VectorQueue<UBIEngine::IO::alpha>::empty
+     0.48%  engine_main  engine_main               [.] std::unique_ptr<UBIEngine::OrderBookHandler, std::default_delete<UBIEngine::OrderBookHandler> >::get
+     0.47%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, robin_hood::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, void>, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::Iter<false>::Iter
+     0.47%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::empty
+     0.45%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::addOrder
+     0.45%  engine_main  engine_main               [.] std::unique_ptr<UBIEngine::OrderBookHandler, std::default_delete<UBIEngine::OrderBookHandler> >::operator->
+     0.44%  engine_main  engine_main               [.] std::__uniq_ptr_impl<UBIEngine::OrderBookHandler, std::default_delete<UBIEngine::OrderBookHandler> >::_M_ptr
+     0.43%  engine_main  engine_main               [.] std::_Rb_tree<unsigned long, std::pair<unsigned long const, UBIEngine::Level>, std::_Select1st<std::pair<unsigned long const, UBIEngine::Level> >, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, UBIEngine::Level> > >::begin
+     0.42%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::executeOrders
+     0.42%  engine_main  engine_main               [.] robin_hood::detail::Table<false, 80ul, unsigned long, UBIEngine::OrderWrapper, robin_hood::hash<unsigned long, void>, std::equal_to<unsigned long> >::Iter<false>::fastForward
+     0.41%  engine_main  engine_main               [.] robin_hood::hash<unsigned int, void>::operator()
+     0.40%  engine_main  engine_main               [.] std::vector<UBIEngine::IO::order_log, std::allocator<UBIEngine::IO::order_log> >::operator[]
+     0.40%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, unsigned int, std::unique_ptr<UBIEngine::MapOrderBook, std::default_delete<UBIEngine::MapOrderBook> >, robin_hood::hash<unsigned int, void>, std::equal_to<unsigned int> >::next
+     0.39%  engine_main  engine_main               [.] UBIEngine::Order::~Order
+     0.39%  engine_main  engine_main               [.] std::_Rb_tree_iterator<std::pair<unsigned long const, UBIEngine::Level> >::_Rb_tree_iterator
+     0.38%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::front
+     0.38%  engine_main  [kernel.kallsyms]         [k] change_pte_range
+     0.38%  engine_main  engine_main               [.] UBIEngine::Order::isAsk
+     0.38%  engine_main  engine_main               [.] robin_hood::detail::Table<true, 80ul, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, robin_hood::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, void>, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::end
+     0.38%  engine_main  engine_main               [.] UBIEngine::IO::VectorQueue<UBIEngine::IO::alpha>::front
+     0.37%  engine_main  engine_main               [.] std::equal_to<unsigned int>::operator()
+     0.37%  engine_main  engine_main               [.] UBIEngine::Market::getBasePrice
+     0.36%  engine_main  engine_main               [.] std::_Rb_tree<unsigned long, std::pair<unsigned long const, UBIEngine::Level>, std::_Select1st<std::pair<unsigned long const, UBIEngine::Level> >, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, UBIEngine::Level> > >::_M_get_insert_hint_unique_pos
+     0.36%  engine_main  engine_main               [.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >
+     0.35%  engine_main  engine_main               [.] std::get<0ul, UBIEngine::MapOrderBook*, std::default_delete<UBIEngine::MapOrderBook> >
+     0.35%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::insertLimitOrder
+     0.35%  engine_main  engine_main               [.] std::get<0ul, UBIEngine::OrderBookHandler*, std::default_delete<UBIEngine::OrderBookHandler> >
+     0.35%  engine_main  engine_main               [.] boost::intrusive::list_base_hook<>::list_base_hook
+     0.35%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::priv_value_traits_ptr
+     0.35%  engine_main  engine_main               [.] boost::intrusive::list_impl<boost::intrusive::bhtraits<UBIEngine::Order, boost::intrusive::list_node_traits<void*>, (boost::intrusive::link_mode_type)1, boost::intrusive::dft_tag, 1u>, unsigned long, true, void>::list_impl
+     0.34%  engine_main  engine_main               [.] std::forward<unsigned long>
+     0.34%  engine_main  engine_main               [.] robin_hood::detail::Table<false, 80ul, unsigned long, UBIEngine::OrderWrapper, robin_hood::hash<unsigned long, void>, std::equal_to<unsigned long> >::keyToIdx<unsigned long const&>
+     0.34%  engine_main  engine_main               [.] UBIEngine::MapOrderBook::bestAsk
+     0.34%  engine_main  libstdc++.so.6.0.28       [.] std::_Rb_tree_decrement
+     0.33%  engine_main  engine_main               [.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>
+     0.33%  engine_main  engine_main               [.] std::__get_helper<0ul, UBIEngine::OrderBookHandler*, std::default_delete<UBIEngine::OrderBookHandler> >
+     0.32%  engine_main  engine_main               [.] std::_Rb_tree_iterator<std::pair<unsigned long const, UBIEngine::Level> >::operator->
+     0.32%  engine_main  engine_main               [.] std::_Head_base<0ul, unsigned long, false>::_Head_base<unsigned long>
