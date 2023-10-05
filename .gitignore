@@ -26,3 +26,6 @@ Thumbs.db
 
 # data 数据文件
 data/
+
+# 输出文件
+.out
