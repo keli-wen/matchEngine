@@ -169,7 +169,97 @@ A macro is useful here because it allows you to reuse this snippet of code where
 
 ## Example#2: How to use it in practice (in my `MatchEngine`)
 
+We use RAII idea to encapsulate the `mmap` and `munmap` operations. The `mmap` operation is performed in the constructor, and the `munmap` operation is performed in the destructor. This is a common practice in C++ programming, and it is also a good way to ensure that resources are properly released.
 
+```cpp
+class MappedFile {
+   public:
+    MappedFile(const std::string& filePath) {
+        // Open the file in read-only mode.
+        int fd = open(filePath.c_str(), O_RDONLY);
+        if (fd == -1) {
+            throw std::runtime_error("Error opening file for reading: " + filePath);
+        }
+
+        // Get file status.
+        // For `stat` defien refer to:
+        // https://pubs.opengroup.org/onlinepubs/009696699/basedefs/sys/stat.h.html.
+        struct stat sb;  // sb means status buffer.
+        if (fstat(fd, &sb) == -1) {
+            close(fd);
+            throw std::runtime_error("Error getting file status: " + filePath);
+        }
+
+        // Get the file size.
+        length = sb.st_size;
+        std::cout << "File size: " << length << std::endl;
+
+        // Use the mmap system call to map the file into memory.
+        addr = mmap(nullptr, length, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (addr == MAP_FAILED) {
+            close(fd);
+            throw std::runtime_error("Error mapping file into memory: " + filePath);
+        }
+    }
+
+    ~MappedFile() {
+        if (addr != nullptr) {
+            munmap(addr, length);
+        }
+        if (fd != -1) {
+            close(fd);
+        }
+    }
+
+    void* data() const { return addr; }
+
+    size_t size() const { return length; }
+
+    MappedFile(const MappedFile&) = delete;             // Forbid Copy constructor
+    MappedFile& operator=(const MappedFile&) = delete;  // Forbid Copy assignment
+
+   private:
+    int fd = -1;
+    void* addr = nullptr;
+    size_t length = 0;
+};
+```
+
+This `MappedFile` is a example of `mmap` encapsulation. The process of `mmap` can be divided into three steps:
+1.  Open the file in read-only mode.
+2.  Get the file status.
+3.  Use the `mmap` system call to map the file into memory.
+
+Depending on the class, we can give the `reader_mmap` function as follows:
+
+```cpp
+template <typename T>
+std::vector<T> reader_mmap(const std::string& filePath) {
+    // Use `MappedFile` class to map the file into memory.
+    MappedFile mappedFile(filePath);
+
+    // Get the size of the mapped file.
+    size_t size = mappedFile.size();
+	// Get the number of elements in the file.
+    size_t numElements = size / sizeof(T);
+
+    // Get a pointer to the mapped data.
+    T* dataPtr = static_cast<T*>(mappedFile.data());
+
+    // Copy the mapped data into a vector.
+    std::vector<T> data(dataPtr, dataPtr + numElements);
+
+    return data;
+}
+```
+
+## Why is Memory-Mapped I/O (`mmap`) Often Faster?
+We can summarize the advantages of `mmap` as follows:
+- **Direct Memory Access**: `mmap` allows a program to access file data directly in memory, bypassing the buffer copying that occurs with standard read/write calls. This direct access can lead to performance improvements, especially for random access patterns.
+- **Lazy Loading**: Memory mapping lazily loads file data. This means that the system reads file content into memory only as it's accessed, rather than loading the entire file upfront. This approach can be particularly efficient for large files. (on-demand loading)
+- **Page Cache Utilization**: Memory-mapped files leverage the operating system's page cache. When multiple processes access the same file, they can share this cache, reducing overall memory usage and improving access times.
+
+You can refer to the `benchmark/IO/README.md` for more details.
 
 ## Reference
 
