@@ -34,13 +34,13 @@ struct twap_order {
 
 struct pnl_and_pos {
     char instrument_id[8];
-	int position;
-	double pnl;
+    int position;
+    double pnl;
 } __attribute__((packed));
 
-template<typename T>
+template <typename T>
 class VectorQueue {
-public:
+   public:
     std::vector<T> data;
     size_t frontIndex = 0;  // 这是队列的“头部”
 
@@ -48,9 +48,7 @@ public:
     VectorQueue(std::vector<T>&& vec) : data(std::move(vec)) {}
 
     // 判断队列是否为空
-    bool empty() const {
-        return frontIndex >= data.size();
-    }
+    bool empty() const { return frontIndex >= data.size(); }
 
     // 获取队列的头部元素
     T& front() {
@@ -76,18 +74,12 @@ public:
     }
 
     // 入队操作
-    void push(const T& value) {
-        data.push_back(value);
-    }
+    void push(const T& value) { data.push_back(value); }
 
-    void push(T&& value) {
-        data.push_back(std::move(value));
-    }
+    void push(T&& value) { data.push_back(std::move(value)); }
 
-    void reset() {
-        frontIndex = 0;
-    }
+    void reset() { frontIndex = 0; }
 };
 
-} // namespace UBIEngine::IO
-#endif // UBI_TRADER_IO_TYPE_H
+}  // namespace UBIEngine::IO
+#endif  // UBI_TRADER_IO_TYPE_H
