@@ -119,7 +119,6 @@ class MappedFile {
 
         // Get the file size.
         length = sb.st_size;
-        std::cout << "File size: " << length << std::endl;
 
         // Use the mmap system call to map the file into memory.
         addr = mmap(nullptr, length, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -130,9 +129,6 @@ class MappedFile {
     }
 
     ~MappedFile() {
-        if (addr != nullptr) {
-            munmap(addr, length);
-        }
         if (fd != -1) {
             close(fd);
         }
@@ -152,7 +148,21 @@ class MappedFile {
 };
 
 template <typename T>
-std::vector<T> reader_mmap(const std::string& filePath) {
+struct MunmapDeleter {
+    size_t size;
+
+    MunmapDeleter(size_t size) : size(size) {}
+
+    void operator()(T* ptr) const {
+        if (ptr != nullptr) {
+            munmap(static_cast<void*>(ptr), size);
+            // 可能还需要其他清理操作
+        }
+    }
+};
+
+template <typename T>
+std::pair<std::unique_ptr<T, MunmapDeleter<T>>, size_t> reader_mmap(const std::string& filePath) {
     // Use `MappedFile` class to map the file into memory.
     MappedFile mappedFile(filePath);
 
@@ -162,10 +172,10 @@ std::vector<T> reader_mmap(const std::string& filePath) {
     // Get a pointer to the mapped data.
     T* dataPtr = static_cast<T*>(mappedFile.data());
 
-    // Copy the mapped data into a vector.
-    std::vector<T> data(dataPtr, dataPtr + numElements);
+    // Use functor to delete the mapped data.
+    MunmapDeleter<T> deleter(size);
 
-    return data;
+    return std::make_pair(std::unique_ptr<T, MunmapDeleter<T>>(dataPtr, deleter), numElements);
 }
 
 template <typename T>
