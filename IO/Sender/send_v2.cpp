@@ -79,6 +79,9 @@ void SendData(int data) {
 ThreadSafeQueue<int> queue;
 
 void consumerThread() {
+    // Need to store the future in a vector to avoid the blocking of the consumer thread.
+    // Refer:
+    // https://cntransgroup.github.io/EffectiveModernCppChinese/7.TheConcurrencyAPI/item38.html
     std::vector<std::future<void>> futures;
     while (true) {
         auto data = queue.wait_and_pop();
@@ -106,5 +109,6 @@ int main() {
     for (auto &p : producers) {
         p.join();
     }
+
     return 0;
 }
